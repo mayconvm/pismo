@@ -48,9 +48,9 @@ func (d SortTransactions) Less(i, j int) bool {
 func sortTrasanctions(transactions map[int]Transactions) map[int]Transactions {
 	var mapSort SortTransactions = transactions
 
-	log.Println("before sort", mapSort)
+	// log.Println("before sort", mapSort)
 	sort.Sort(mapSort)
-	log.Println("after sort", mapSort)
+	// log.Println("after sort", mapSort)
 
 	return mapSort
 }
@@ -60,7 +60,7 @@ func registreTransaction(transactionAdapter TransactionAdapter, account Accounts
 	var newTransaction Transactions
 
 	// check limits user
-	if ok := checkLimitsUser(account, transactionAdapter); !ok {
+	if checkLimitsUser(account, transactionAdapter) == false {
 		return newTransaction, errors.New("User without limit")
 	}
 
@@ -163,7 +163,16 @@ func resolveBalanceTransaction(transactions map[int]Transactions, payment Transa
 // register new payment
 func registrePayments(transactionAdapter TransactionAdapter, account Accounts) (Transactions, error) {
 	transactionAdapter.OperationTypeID = OperationTypeIDPayment
+
+	// register new payment
 	newTransaction, err := registreTransaction(transactionAdapter, account)
+
+	if err != nil {
+		return newTransaction, err
+	}
+
+	// update limits to user
+	_, err = updateLimitsAccount(account, newTransaction)
 
 	return newTransaction, err
 }

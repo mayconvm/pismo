@@ -70,17 +70,31 @@ func updateAccount(id int, availableCreditLimit float32, availableWithdrawalLimi
 	return account, err
 }
 
+// update limits to user
+func updateLimitsAccount(account Accounts, transaction Transactions) (Accounts, error) {
+	availableCreditLimit := account.AvailableCreditLimit
+	availableWithdrawalLimit := account.AvailableWithdrawalLimit
+
+	switch transaction.OperationTypeID {
+	case OperationTypeIDWithdrawal:
+		availableCreditLimit += transaction.Amount
+	case OperationTypeIDCredit:
+		availableWithdrawalLimit += transaction.Amount
+	}
+
+	return updateAccount(int(account.AccountID), availableCreditLimit, availableWithdrawalLimit)
+}
+
 // check limits to transactions
 func checkLimitsUser(accounts Accounts, transactionAdapter TransactionAdapter) bool {
-
 	switch transactionAdapter.OperationTypeID {
 	case OperationTypeIDWithdrawal:
 		return checkLimitsUserWithdrawal(accounts, transactionAdapter)
 	case OperationTypeIDCredit:
 		return checkLimitsUserCredit(accounts, transactionAdapter)
+	default:
+		return true
 	}
-
-	return true
 }
 
 // check credit limit available to transaction
