@@ -160,6 +160,7 @@ func resolveBalanceTransaction(transactions map[int]Transactions, payment Transa
 	return result, payment
 }
 
+// register new payment
 func registrePayments(transactionAdapter TransactionAdapter, account Accounts) (Transactions, error) {
 	transactionAdapter.OperationTypeID = OperationTypeIDPayment
 	newTransaction, err := registreTransaction(transactionAdapter, account)

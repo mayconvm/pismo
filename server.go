@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -28,6 +29,7 @@ var instanceBank = struct {
 
 // stat method
 func main() {
+	port := ":8090"
 	r := mux.NewRouter()
 
 	// routes to accounts
@@ -40,7 +42,6 @@ func main() {
 	t := r.PathPrefix("/transactions").Subrouter()
 	t.HandleFunc("/", httpTransactions)
 	t.HandleFunc("", httpTransactions)
-	t.HandleFunc("/{id}", httpTransactions)
 
 	// routes to payments
 	p := r.PathPrefix("/payments").Subrouter()
@@ -48,5 +49,7 @@ func main() {
 	p.HandleFunc("", httpPayments)
 
 	http.Handle("/", r)
-	http.ListenAndServe(":8090", nil)
+	http.ListenAndServe(port, nil)
+
+	fmt.Println("Server: localhost" + port)
 }

@@ -2,16 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
+// switch to action with accounts
 func httpAccounts(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("Accounts", req.URL)
-
 	switch req.Method {
 	case "GET":
 		account, err := httpAccountsRetriever(req)
@@ -46,10 +44,9 @@ func httpAccounts(w http.ResponseWriter, req *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(result)
 	}
-
-	// log.Println(instanceBank)
 }
 
+// register new account
 func httpAccountsRegistre(req *http.Request) (Accounts, error) {
 	var newAccount Accounts
 	newAccount, err := newAccount.parseJson(req.Body)
@@ -64,10 +61,10 @@ func httpAccountsRegistre(req *http.Request) (Accounts, error) {
 	return resultAccount, err
 }
 
+// retriever data account
 func httpAccountsRetriever(req *http.Request) (Accounts, error) {
 	var account Accounts
 	params := mux.Vars(req)
-	// log.Println(params)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		return account, err
@@ -77,6 +74,7 @@ func httpAccountsRetriever(req *http.Request) (Accounts, error) {
 	return account, err
 }
 
+// update data accounts
 func httpAccountsUpdate(req *http.Request) (Accounts, error) {
 	var account Accounts
 	params := mux.Vars(req)

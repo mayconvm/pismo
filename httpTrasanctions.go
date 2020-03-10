@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 )
 
@@ -13,6 +11,7 @@ type TransactionAdapter struct {
 	Amount          float32 `json:"Amount"`
 }
 
+// parse transaction by json to TransactionAdapter
 func (transaction TransactionAdapter) parseJson(body Reader) (TransactionAdapter, error) {
 	var newInstance TransactionAdapter
 	err := json.NewDecoder(body).Decode(&newInstance)
@@ -20,9 +19,8 @@ func (transaction TransactionAdapter) parseJson(body Reader) (TransactionAdapter
 	return newInstance, err
 }
 
+// switch to action with transaction
 func httpTransactions(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("Transactions", req.URL)
-
 	switch req.Method {
 	case "POST":
 		data, err := httpTransactionRegistre(req)
@@ -38,6 +36,7 @@ func httpTransactions(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// register new transaction
 func httpTransactionRegistre(req *http.Request) (Transactions, error) {
 	var newInstance Transactions
 	var transactionAdapter TransactionAdapter
@@ -54,7 +53,7 @@ func httpTransactionRegistre(req *http.Request) (Transactions, error) {
 
 	resultAccount, err := registreTransaction(transactionAdapter, account)
 
-	log.Println("InstanceBank.transaction", instanceBank.transaction)
+	//log.Println("InstanceBank.transaction", instanceBank.transaction)
 
 	return resultAccount, err
 }
