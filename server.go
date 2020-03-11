@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/kataras/tablewriter"
+	"github.com/landoop/tableprinter"
 )
 
 // constants with transaction operation
@@ -48,8 +52,44 @@ func main() {
 	p.HandleFunc("/", httpPayments)
 	p.HandleFunc("", httpPayments)
 
+	fmt.Println("Server: localhost" + port)
+
 	http.Handle("/", r)
 	http.ListenAndServe(port, nil)
+}
 
-	fmt.Println("Server: localhost" + port)
+func printTableBankAccounts() {
+	printer := tableprinter.New(os.Stdout)
+
+	log.Println("Accounts")
+
+	printer.BorderTop = true
+	printer.BorderBottom = true
+	printer.BorderLeft = true
+	printer.BorderRight = true
+	printer.CenterSeparator = "│"
+	printer.ColumnSeparator = "│"
+	printer.RowSeparator = "─"
+	printer.HeaderBgColor = tablewriter.BgBlackColor
+	printer.HeaderFgColor = tablewriter.FgGreenColor
+
+	printer.Print(instanceBank.accounts)
+}
+
+func printTableBankTransaction() {
+	printer := tableprinter.New(os.Stdout)
+
+	log.Println("Transaction")
+
+	printer.BorderTop = true
+	printer.BorderBottom = true
+	printer.BorderLeft = true
+	printer.BorderRight = true
+	printer.CenterSeparator = "│"
+	printer.ColumnSeparator = "│"
+	printer.RowSeparator = "─"
+	printer.HeaderBgColor = tablewriter.BgBlackColor
+	printer.HeaderFgColor = tablewriter.FgGreenColor
+
+	printer.Print(instanceBank.transaction)
 }

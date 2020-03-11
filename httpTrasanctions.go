@@ -34,6 +34,8 @@ func httpTransactions(w http.ResponseWriter, req *http.Request) {
 		w.Write(result)
 
 	}
+
+	printTableBankTransaction()
 }
 
 // register new transaction
