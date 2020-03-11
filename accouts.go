@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"strconv"
 )
 
 type Accounts struct {
@@ -19,9 +21,18 @@ func (account Accounts) parseJson(body Reader) (Accounts, error) {
 	return newAccount, err
 }
 
+func (account Accounts) String() string {
+	result := "AccountID: " + strconv.Itoa(int(account.AccountID))
+	result += " | AvailableCreditLimit: " + fmt.Sprintf("%f", account.AvailableCreditLimit)
+	result += " | AvailableWithdrawalLimit: " + fmt.Sprintf("%f", account.AvailableWithdrawalLimit)
+
+	return result
+}
+
 // register new account
 func registreAccount(account Accounts) (Accounts, error) {
 	id := len(instanceBank.accounts) + 1
+	account.AccountID = int8(id)
 	instanceBank.accounts[id] = account
 
 	return account, nil
@@ -72,14 +83,14 @@ func updateAccount(id int, availableCreditLimit float32, availableWithdrawalLimi
 
 // update limits to user
 func updateLimitsAccount(account Accounts, transaction Transactions) (Accounts, error) {
-	availableCreditLimit := account.AvailableCreditLimit
-	availableWithdrawalLimit := account.AvailableWithdrawalLimit
+	availableCreditLimit := float32(0)
+	availableWithdrawalLimit := float32(0)
 
 	switch transaction.OperationTypeID {
 	case OperationTypeIDWithdrawal:
-		availableCreditLimit += transaction.Amount
+		availableWithdrawalLimit = transaction.Amount
 	case OperationTypeIDCredit:
-		availableWithdrawalLimit += transaction.Amount
+		availableCreditLimit = transaction.Amount
 	}
 
 	return updateAccount(int(account.AccountID), availableCreditLimit, availableWithdrawalLimit)
