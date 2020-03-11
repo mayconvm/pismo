@@ -22,7 +22,7 @@ func Test_updateLimitsAccount(t *testing.T) {
 	transactions := Transactions{
 		TransactionID:   1,
 		OperationTypeID: 2,
-		Amount:          100,
+		Amount:          -100,
 		EventDate:       time.Now(),
 	}
 

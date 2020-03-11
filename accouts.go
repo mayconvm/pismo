@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -11,14 +10,6 @@ type Accounts struct {
 	AccountID                int8    `json:"AccountID"`
 	AvailableCreditLimit     float32 `json:"AvailableCreditLimit"`
 	AvailableWithdrawalLimit float32 `json:"AvailableWithdrawalLimit"`
-}
-
-// parse json
-func (account Accounts) parseJson(body Reader) (Accounts, error) {
-	var newAccount Accounts
-	err := json.NewDecoder(body).Decode(&newAccount)
-
-	return newAccount, err
 }
 
 func (account Accounts) String() string {
@@ -62,19 +53,8 @@ func updateAccount(id int, availableCreditLimit float32, availableWithdrawalLimi
 		return account, err
 	}
 
-	accountAvailableCreditLimit := account.AvailableCreditLimit - availableCreditLimit
-	accountAvailableWithdrawalLimit := account.AvailableWithdrawalLimit - availableWithdrawalLimit
-
-	if accountAvailableCreditLimit < 0 {
-		accountAvailableCreditLimit = 0
-	}
-
-	if accountAvailableWithdrawalLimit < 0 {
-		accountAvailableWithdrawalLimit = 0
-	}
-
-	account.AvailableCreditLimit = accountAvailableCreditLimit
-	account.AvailableWithdrawalLimit = accountAvailableWithdrawalLimit
+	account.AvailableCreditLimit = account.AvailableCreditLimit + availableCreditLimit
+	account.AvailableWithdrawalLimit = account.AvailableWithdrawalLimit + availableWithdrawalLimit
 
 	instanceBank.accounts[id] = account
 
