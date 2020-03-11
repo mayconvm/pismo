@@ -144,7 +144,7 @@ func Test_retrieverOpenTransactions(t *testing.T) {
 	}
 
 	// todo filter data
-	openTransactions := retrieverOpenTransactions("data", account)
+	openTransactions := retrieverOpenTransactions(account)
 
 	if len(openTransactions) != 3 {
 		t.Errorf("Trasanction -> retrieverOpenTransactions() expect %v . got = %v", 3, len(openTransactions))
@@ -202,7 +202,7 @@ func Test_calculationTransactions(t *testing.T) {
 		}
 	}
 
-	calculationTransactions("data", account)
+	calculationTransactions(account)
 
 	for _, transactions := range instanceBank.transaction[account.AccountID] {
 		if transactions.OperationTypeID == OperationTypeIDPayment && transactions.Balance != 0 {

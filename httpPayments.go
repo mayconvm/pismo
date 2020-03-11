@@ -51,7 +51,7 @@ func httpPaymentsRegistre(req *http.Request) (map[int]Transactions, error) {
 		resultMapTransaction[key], err = registrePayments(transactionAdapter, account)
 
 		//TODO what is open transaction?
-		calculationTransactions("data", account)
+		calculationTransactions(account)
 	}
 
 	// log.Println("InstanceBank.transaction", instanceBank.transaction)

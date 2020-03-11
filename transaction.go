@@ -98,7 +98,7 @@ func updateTrasaction(transactions map[int]Transactions, account Accounts) {
 }
 
 // retriever all transaction if Balance < 0 to each account
-func retrieverOpenTransactions(date string, account Accounts) map[int]Transactions {
+func retrieverOpenTransactions(account Accounts) map[int]Transactions {
 	result := make(map[int]Transactions)
 	for key, transaction := range instanceBank.transaction[account.AccountID] {
 		if transaction.Balance < 0 {
@@ -110,8 +110,8 @@ func retrieverOpenTransactions(date string, account Accounts) map[int]Transactio
 }
 
 // calculation transaction after payments
-func calculationTransactions(data string, account Accounts) error {
-	openTrasanction := retrieverOpenTransactions(data, account)
+func calculationTransactions(account Accounts) error {
+	openTrasanction := retrieverOpenTransactions(account)
 	transactionPayments := retrieverPaymentsTrasaction(account)
 
 	openTrasanction = sortTrasanctions(openTrasanction)
