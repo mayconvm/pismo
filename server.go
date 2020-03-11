@@ -38,19 +38,17 @@ func main() {
 
 	// routes to accounts
 	a := r.PathPrefix("/accounts").Subrouter()
-	a.HandleFunc("/", httpAccounts)
-	a.HandleFunc("", httpAccounts)
-	a.HandleFunc("/{id}", httpAccounts)
+	a.HandleFunc("", httpAccounts).Methods("POST")
+	a.HandleFunc("/{id}", httpAccounts).Methods("PATCH")
+	a.HandleFunc("/{id}/limits", httpAccounts).Methods("GET")
 
 	// routes to transaction
 	t := r.PathPrefix("/transactions").Subrouter()
-	t.HandleFunc("/", httpTransactions)
-	t.HandleFunc("", httpTransactions)
+	t.HandleFunc("", httpTransactions).Methods("POST")
 
 	// routes to payments
 	p := r.PathPrefix("/payments").Subrouter()
-	p.HandleFunc("/", httpPayments)
-	p.HandleFunc("", httpPayments)
+	p.HandleFunc("", httpPayments).Methods("POST")
 
 	fmt.Println("Server: localhost" + port)
 
