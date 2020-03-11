@@ -26,9 +26,13 @@ Execute os comandos:
 # Rotas
 
 ## Accounts
-GET /v1/accounts/<id>/limits
+* GET /v1/accounts/<id>/limits
+    ```shell
+    $ curl localhost:8090/v1/accounts/1
+    ```
 
-POST /v1/accounts
+* POST /v1/accounts
+    ```json
     {
         "available_credit_limit": {
             "amount": 10.00
@@ -37,7 +41,13 @@ POST /v1/accounts
             "amount": 10.00
         }
     }
-PATCH /v1/accounts/<id>
+    ```
+    ```shell
+    $ curl -X POST localhost:8090/v1/accounts --data '{"available_credit_limit": {"amount": 123.1}, "available_withdrawal_limit": {"amount": 32.2}}'
+    ```
+
+* PATCH /v1/accounts/<id>
+    ```json
     {
         "available_credit_limit": {
             "amount": 123.45 // enviar valor negativo para subtrair
@@ -46,19 +56,29 @@ PATCH /v1/accounts/<id>
             "amount": 123.45 // enviar valor negativo para subtrair
         }
     }
+    ```
+    ```shell
+    $ curl -X PATCH localhost:8090/v1/accounts/1 --data '{"available_credit_limit": {"amount": 100}, "available_withdrawal_limit": {"amount": 125.5}}'
+    ```
 
 ## Transaction
 
-POST /v1/transactions
+* POST /v1/transactions
+    ```json
     {
         "account_id": 1,
         "operation_type_id": 1,
         "amount": 123.45
     }
+    ```
+    ```shell
+    $ curl -X POST localhost:8090/v1/transactions --data '{"account_id": 1, "operation_type_id": 1, "amount": 100}'
+    ```
 
 ## Payments
 
-POST /v1/payments (pode enviar multiplos pagamentos)
+* POST /v1/payments (pode enviar multiplos pagamentos)
+    ```json
     [
         {
             "account_id": 1,
@@ -69,3 +89,7 @@ POST /v1/payments (pode enviar multiplos pagamentos)
             "amount": 423.45
         } ,
     ]
+    ```
+    ```shell
+    $ curl -X POST localhost:8090/v1/payments --data '[{"account_id": 1, "amount": 10}, {"account_id": 1, "amount": 10}]'
+    ```
