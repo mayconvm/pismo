@@ -6,9 +6,9 @@ import (
 )
 
 type TransactionAdapter struct {
-	AccountID       int8    `json:"AccountID"`
-	OperationTypeID int8    `json:"OperationTypeID"`
-	Amount          float32 `json:"Amount"`
+	AccountID       int8    `json:"account_id"`
+	OperationTypeID int8    `json:"operation_type_id"`
+	Amount          float32 `json:"amount"`
 }
 
 // parse transaction by json to TransactionAdapter

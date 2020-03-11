@@ -5,6 +5,15 @@ import (
 	"net/http"
 )
 
+type MapTransactionPaymentAdapter []TransactionAdapter
+
+func (transaction MapTransactionPaymentAdapter) parseJson(body Reader) (MapTransactionPaymentAdapter, error) {
+	var mapTransactionPaymentAdapter MapTransactionPaymentAdapter
+	err := json.NewDecoder(body).Decode(&mapTransactionPaymentAdapter)
+
+	return mapTransactionPaymentAdapter, err
+}
+
 // switch to action with payments
 func httpPayments(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
@@ -24,26 +33,28 @@ func httpPayments(w http.ResponseWriter, req *http.Request) {
 }
 
 // register new payments
-func httpPaymentsRegistre(req *http.Request) (Transactions, error) {
-	var newInstance Transactions
-	var transactionAdapter TransactionAdapter
-	transactionAdapter, err := transactionAdapter.parseJson(req.Body)
+func httpPaymentsRegistre(req *http.Request) (map[int]Transactions, error) {
+	var mapTransactionPaymentAdapter MapTransactionPaymentAdapter
+	resultMapTransaction := make(map[int]Transactions)
 
+	mapTransactionPaymentAdapter, err := mapTransactionPaymentAdapter.parseJson(req.Body)
 	if err != nil {
-		return newInstance, err
+		return resultMapTransaction, err
 	}
 
-	account, err := retrieverAccount(int(transactionAdapter.AccountID))
-	if err != nil {
-		return newInstance, err
+	for key, transactionAdapter := range mapTransactionPaymentAdapter {
+		account, err := retrieverAccount(int(transactionAdapter.AccountID))
+		if err != nil {
+			return resultMapTransaction, err
+		}
+
+		resultMapTransaction[key], err = registrePayments(transactionAdapter, account)
+
+		//TODO what is open transaction?
+		calculationTransactions("data", account)
 	}
-
-	resultAccount, err := registrePayments(transactionAdapter, account)
-
-	//TODO what is open transaction?
-	calculationTransactions("data", account)
 
 	// log.Println("InstanceBank.transaction", instanceBank.transaction)
 
-	return resultAccount, err
+	return resultMapTransaction, err
 }
