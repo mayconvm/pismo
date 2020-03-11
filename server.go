@@ -34,7 +34,7 @@ var instanceBank = struct {
 // stat method
 func main() {
 	port := ":8090"
-	r := mux.NewRouter()
+	r := mux.NewRouter().PathPrefix("/v1").Subrouter()
 
 	// routes to accounts
 	a := r.PathPrefix("/accounts").Subrouter()
