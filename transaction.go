@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"log"
 	"sort"
 	"time"
 )
@@ -36,7 +35,7 @@ func (d SortTransactions) Len() int      { return len(d) }
 func (d SortTransactions) Swap(i, j int) { d[i], d[j] = d[j], d[i] }
 func (d SortTransactions) Less(i, j int) bool {
 	if d[i].OperationTypeID == d[j].OperationTypeID {
-		return d[i].EventDate.Before(d[j].EventDate)
+		return d[i].EventDate.After(d[j].EventDate)
 	}
 
 	return operationType[d[i].OperationTypeID].chargeOrder < operationType[d[j].OperationTypeID].chargeOrder
@@ -111,8 +110,8 @@ func retrieverOpenTransactions(date string, account Accounts) map[int]Transactio
 }
 
 // calculation transaction after payments
-func calculationTransactions(date string, account Accounts) error {
-	openTrasanction := retrieverOpenTransactions(date, account)
+func calculationTransactions(data string, account Accounts) error {
+	openTrasanction := retrieverOpenTransactions(data, account)
 	transactionPayments := retrieverPaymentsTrasaction(account)
 
 	openTrasanction = sortTrasanctions(openTrasanction)
@@ -128,8 +127,8 @@ func calculationTransactions(date string, account Accounts) error {
 
 	updateTrasaction(resultPayments, account)
 
-	log.Println("openTrasanction:", resultTransaction)
-	log.Println("payments:", resultPayments)
+	// log.Println("openTrasanction:", resultTransaction)
+	// log.Println("payments:", resultPayments)
 
 	return nil
 }
@@ -143,11 +142,13 @@ func resolveBalanceTransaction(transactions map[int]Transactions, payment Transa
 		// log.Println("Transaction start-->", transaction.Balance)
 
 		if payment.Balance != 0 {
-			if payment.Balance >= (transaction.Balance * -1) {
-				payment.Balance += transaction.Balance
+			balance := payment.Balance + transaction.Balance
+
+			if balance > 0 {
+				payment.Balance = balance
 				transaction.Balance = 0
 			} else {
-				transaction.Balance += payment.Balance
+				transaction.Balance = balance
 				payment.Balance = 0
 			}
 		}
@@ -181,7 +182,7 @@ func registrePayments(transactionAdapter TransactionAdapter, account Accounts) (
 func retrieverPaymentsTrasaction(account Accounts) map[int]Transactions {
 	result := make(map[int]Transactions)
 	for key, transaction := range instanceBank.transaction[account.AccountID] {
-		if transaction.OperationTypeID == OperationTypeIDPayment {
+		if transaction.OperationTypeID == OperationTypeIDPayment && transaction.Amount > 0 {
 			result[key] = transaction
 		}
 	}
